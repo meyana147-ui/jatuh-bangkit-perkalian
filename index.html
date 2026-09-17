@@ -1,1 +1,110 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#6c63ff">
+<title>Jatuh Bangkit Perkalian</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef2ff,#e9fff8);color:#263238}
+.app{max-width:900px;margin:auto;padding:14px}.card{background:#fff;border-radius:22px;padding:20px;margin:14px 0;box-shadow:0 7px 24px #26323818}
+h1{color:#6c63ff;text-align:center}.center{text-align:center}.muted{color:#607d8b}
+.progress{height:11px;background:#e8eaf6;border-radius:20px;overflow:hidden}.bar{height:100%;width:0;background:#6c63ff;transition:.3s}
+.badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px}.badge{padding:8px 14px;border-radius:20px;background:#f1f3f4;font-weight:bold}
+.level{text-align:center;color:#6c63ff;font-size:23px;font-weight:bold}.q{border:2px solid #e7eaf1;border-radius:16px;padding:17px;margin-top:15px}
+button{border:0;border-radius:13px;padding:13px 16px;font-size:16px;font-weight:bold;cursor:pointer;background:#6c63ff;color:white;margin-top:8px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option{background:#f5f6fa;color:#263238;border:2px solid #e1e4ec;text-align:left;margin:0}
+input,textarea{width:100%;padding:12px;border:2px solid #dfe3ea;border-radius:11px;font-size:16px;margin:6px 0 12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.stars{text-align:center;font-size:30px;line-height:1.3}
+.feedback{padding:13px;border-radius:13px;margin-top:12px;font-weight:bold}.good{background:#dff5ef;color:#126b5e}.bad{background:#fff0eb;color:#8b3520}.info{background:#eef2ff;color:#4338a5}
+.strategies{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.strategy{background:#f7f8ff;color:#263238;border:2px solid #dfe3f5;margin:0}.selected{border-color:#6c63ff!important;background:#ecebff!important}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:10px}.check{padding:12px;border:2px solid #e1e5eb;border-radius:11px;background:#f7f8fa}.check input{width:auto;margin:0 7px 0 0}
+@media(max-width:650px){.app{padding:9px}.grid,.options,.checks{grid-template-columns:1fr}.strategies{grid-template-columns:1fr}button{width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="card">
+<h1>🌱 Jatuh Bangkit Perkalian</h1>
+<p class="center muted">Games Growth Mindset Matematika • Kelas 3 SD</p>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<div class="badges"><span class="badge">⭐ Skor: <span id="score">0</span></span><span class="badge">🏆 <span id="lv">Mulai</span></span></div>
+</div>
 
+<section id="start" class="card">
+<h2 class="center">🚂 Siap belajar sambil berkembang?</h2>
+<p class="center">Coba → Jatuh → Refleksi → Pilih Strategi → Bangkit → Naik Level</p>
+<div class="grid">
+<div><b>Nama</b><input id="name" placeholder="Tulis nama"></div>
+<div><b>Kelas</b><input id="class" placeholder="Contoh: III A"></div>
+</div>
+<button onclick="start()">🚀 Mulai Permainan</button>
+</section>
+
+<section id="game" class="card" style="display:none"></section>
+
+<section id="reflection" class="card" style="display:none">
+<h2 class="level center">🧠 Bagaimana kamu mendapatkan jawaban?</h2>
+<p class="center">Pilih minimal 1 dan maksimal 4.</p>
+<div class="checks">
+<label class="check"><input type="checkbox" value="Menggunakan gambar" onchange="refChange()">🖼️ Menggunakan gambar</label>
+<label class="check"><input type="checkbox" value="Penjumlahan berulang" onchange="refChange()">➕ Penjumlahan berulang</label>
+<label class="check"><input type="checkbox" value="Hitung loncat" onchange="refChange()">👣 Hitung loncat</label>
+<label class="check"><input type="checkbox" value="Menghafal perkalian" onchange="refChange()">🧠 Menghafal perkalian</label>
+<label class="check"><input id="other" type="checkbox" value="Cara lain" onchange="refChange()">✏️ Cara lain</label>
+</div>
+<div id="otherBox" style="display:none"><b>Jelaskan cara lain:</b><textarea id="otherText"></textarea></div>
+<button onclick="finish()">🌱 Saya Siap Berkembang</button>
+</section>
+
+<section id="final" class="card" style="display:none"></section>
+</div>
+
+<script>
+const L=[
+{t:"LEVEL 1 — AKU BERANI MENCOBA",d:"Berani mencoba adalah langkah pertama untuk belajar.",q:[
+{type:"mc",s:"2 × 3 = ...",o:["5","6","8","9"],a:1},
+{type:"mc",s:"Lengkapi: 4 + 4 + 4 = ... × 4",o:["2","3","4","5"],a:1}]},
+{t:"LEVEL 2 — AKU MAU BELAJAR",d:"Hubungkan Gambar → Penjumlahan → Perkalian.",q:[
+{type:"form",n:5,rep:"5+5+5=15",mul:"3x5=15",ex:["2+2+2=6","2x3=6"]},
+{type:"form",n:8,rep:"8+8+8+8=32",mul:"4x8=32",ex:["6+6+6+6=24","4x6=24"]}]},
+{t:"LEVEL 3 — AKU BERANI MEMPERBAIKI",d:"🔍 DETEKTIF KESALAHAN",q:[
+{type:"det",s:"4 × 3 = ?",child:"4 × 3 = 10",ok:false,rep:"3+3+3+3=12",ex:"2+2+2=6"},
+{type:"det",s:"3 × 7 = ?",child:"3 × 7 = 21",ok:true,rep:"7+7+7=21",ex:"4+4+4=12"}]},
+{t:"LEVEL 4 — AKU MULAI MEMAHAMI",d:"Pahami banyak kelompok dan isi setiap kelompok.",q:[
+{type:"form4",s:"5 × 3 = ...",rep:"3+3+3+3+3=15",ex:"2+2+2+2=8"},
+{type:"mc",s:"Which form is correct? 2 + 2 + 2 + 2 + 2",o:["2 × 2","5 × 2","2 × 5","10 × 2"],a:1}]},
+{t:"LEVEL 5 — AKU TERUS BERKEMBANG",d:"🚀 Tantangan Cerita",q:[
+{type:"story",s:"Rani memiliki 5 kotak pensil. Setiap kotak berisi 4 pensil. Berapa jumlah pensil semuanya?",rep:"4+4+4+4+4=20",mul:"5x4=20",ex:["3+3+3=9","3x3=9"]},
+{type:"story",s:"Ibu membeli Budi 3 kg jeruk. Setiap 1 kg berisi 8 jeruk. Berapa jumlah jeruk semuanya?",rep:"8+8+8=24",mul:"3x8=24",ex:["5+5=10","2x5=10"]}]}
+];
+let li=0,qi=0,score=0,tried=false,repair=false;
+function norm(x){return(x||"").toLowerCase().replace(/×/g,"x").replace(/\s+/g,"")}
+function start(){if(!name.value.trim()||!class.value.trim()){alert("Isi nama dan kelas terlebih dahulu.");return}startEl();render()}
+const startEl=()=>{document.getElementById("start").style.display="none";document.getElementById("game").style.display="block"};
+function head(){scoreEl.textContent=score;lv.textContent=li<5?(li+1)+"/5":"Selesai";bar.style.width=(li/5*100)+"%"}
+const scoreEl=document.getElementById("score"),lv=document.getElementById("lv"),bar=document.getElementById("bar");
+function render(){
+tried=!repair;const q=L[li].q[qi],g=document.getElementById("game");
+head();let h='<div class="level">'+L[li].t+'</div><p class="center muted">'+L[li].d+'</p><div class="q"><h3>Soal '+(qi+1)+'</h3>';
+if(q.type==="mc")h+='<p style="font-size:21px"><b>'+q.s+'</b></p><div class="options">'+q.o.map((x,i)=>'<button class="option" onclick="mc('+i+')">'+String.fromCharCode(65+i)+'. '+x+'</button>').join('')+'</div>';
+if(q.type==="form")h+='<div class="stars">'+"⭐".repeat(q.n)+'<br>'+"⭐".repeat(q.n)+'<br>'+"⭐".repeat(q.n)+'</div><p class="center"><b>Tuliskan penjumlahan berulang dan bentuk perkaliannya.</b></p><div class="grid"><div><b>Penjumlahan berulang</b><input id="rep" placeholder="Contoh: '+q.ex[0]+'"></div><div><b>Perkalian</b><input id="mul" placeholder="Contoh: '+q.ex[1]+'"></div></div><button onclick="form()">✅ Periksa</button>';
+if(q.type==="det")h+='<div class="feedback info">👦 Jawaban anak: <b>'+q.child+'</b></div><p><b>Apa yang salah / ada yang salah?</b></p><input id="why" placeholder="Contoh: jawabannya ..."><b>Penjumlahan berulang:</b><input id="rep" placeholder="Contoh: '+q.ex+'"><button onclick="det()">🔍 Periksa</button>';
+if(q.type==="form4")h+='<p style="font-size:21px"><b>'+q.s+'</b></p><b>Penjumlahan berulang:</b><input id="rep" placeholder="Contoh: '+q.ex+'"><button onclick="form4()">🌱 Periksa</button>';
+if(q.type==="story")h+='<p><b>'+q.s+'</b></p><div class="grid"><div><b>Penjumlahan berulang</b><input id="rep" placeholder="Contoh: '+q.ex[0]+'"></div><div><b>Perkalian</b><input id="mul" placeholder="Contoh: '+q.ex[1]+'"></div></div><button onclick="story()">🚀 Periksa</button>';
+h+='<div id="fb"></div></div>';g.innerHTML=h}
+function success(){score+=tried?3:2;document.getElementById("fb").innerHTML='<div class="feedback good">🎉 Benar! Kamu berhasil belajar dari proses.<br><b>'+(tried?"+3 Berhasil memperbaiki kesalahan":"+2 Jawaban benar")+'</b></div>';head();setTimeout(next,850)}
+function fall(msg){if(!repair){score+=1;repair=true}document.getElementById("fb").innerHTML='<div class="feedback bad">🌧️ <b>Jatuh:</b> '+msg+'<br>⭐ +1 Berani mencoba</div><p><b>🌱 Pilih strategi untuk bangkit:</b></p><div class="strategies"><button class="strategy" onclick="pick(this)">🟦 Gambar kelompok</button><button class="strategy" onclick="pick(this)">➕ Penjumlahan berulang</button><button class="strategy" onclick="pick(this)">👣 Hitung loncat</button></div><button id="retry" style="display:none" onclick="render()">🔁 Bangkit & Perbaiki</button>';head()}
+function pick(b){document.querySelectorAll(".strategy").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");document.getElementById("retry").style.display="block"}
+function mc(i){let q=L[li].q[qi];i===q.a?success():fall("Jawaban belum tepat. Periksa kembali dengan penjumlahan berulang.")}
+function form(){let q=L[li].q[qi];norm(rep.value)===norm(q.rep)&&norm(mul.value)===norm(q.mul)?success():fall("Hubungkan jumlah kelompok dengan banyak benda pada setiap kelompok.")}
+function det(){let q=L[li].q[qi],w=norm(why.value),r=norm(rep.value),ok=q.ok?(w.includes("benar")||w.includes("tidakada")||w.includes("tidaksalah")):(w.includes("salah")&&(w.includes("10")||w.includes("12")));ok&&r===norm(q.rep)?success():fall(q.ok?"Tidak ada yang salah. 3 × 7 = 21 karena 7 + 7 + 7 = 21.":"4 × 3 berarti 3 ditambahkan 4 kali: 3 + 3 + 3 + 3 = 12.")}
+function form4(){let q=L[li].q[qi];norm(rep.value)===norm(q.rep)?success():fall("5 × 3 berarti 5 kelompok, masing-masing berisi 3. Jadi 3 dijumlahkan sebanyak 5 kali.")}
+function story(){let q=L[li].q[qi];norm(rep.value)===norm(q.rep)&&norm(mul.value)===norm(q.mul)?success():fall("Gunakan jumlah kelompok dan isi setiap kelompok, lalu tuliskan penjumlahan berulang dan perkaliannya.")}
+function next(){qi++;if(qi>=L[li].q.length){li++;qi=0}if(li>=L.length){game.style.display="none";reflection.style.display="block";bar.style.width="100%";lv.textContent="Selesai";return}repair=false;render()}
+function refChange(){let c=[...document.querySelectorAll("#reflection input[type=checkbox]")],s=c.filter(x=>x.checked);if(s.length>4){event.target.checked=false;alert("Maksimal 4 pilihan.");return}otherBox.style.display=other.checked?"block":"none"}
+function finish(){let s=[...document.querySelectorAll("#reflection input[type=checkbox]:checked")];if(!s.length){alert("Pilih minimal 1 cara.");return}if(s.length>4){alert("Maksimal 4 cara.");return}if(other.checked&&!otherText.value.trim()){alert("Jelaskan cara lain terlebih dahulu.");return}
+let methods=s.map(x=>x.value).join(", ");final.style.display="block";reflection.style.display="none";final.innerHTML='<div class="center"><h2>🌱🏆 Permainan Selesai!</h2><p><b>'+name.value+'</b> • Kelas <b>'+class.value+'</b></p><h1>'+score+' ⭐</h1><p><b>Cara yang kamu gunakan:</b><br>'+methods+'</p>'+(other.checked?'<p><b>Cara lain:</b><br>'+otherText.value+'</p>':'')+'<div class="feedback good">🌟 Kamu sudah berani mencoba, memperbaiki kesalahan, dan terus berkembang!</div><button onclick="location.reload()">🔄 Main Lagi</button></div>'}
+</script>
+</body>
+</html>
